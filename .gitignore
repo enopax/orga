@@ -1,6 +1,8 @@
 # Enopax Project Structure
 # This file ignores repository folders but tracks project structure files
 
+orga/
+
 # AgentProvider Project
 AgentProvider/provider-agent/
 
