@@ -1,0 +1,6 @@
+# Repository configuration for ResourceAPI project
+# Format: <git_url> [folder_name]
+# If folder_name is omitted, uses repository name from URL
+
+git@github.com:enopax/resource-api.git
+git@github.com:enopax/resource-api-frontend.git

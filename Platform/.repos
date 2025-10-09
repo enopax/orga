@@ -1,0 +1,5 @@
+# Repository configuration for Platform project
+# Format: <git_url> [folder_name]
+# If folder_name is omitted, uses repository name from URL
+
+git@github.com:addiinnocent/IIIII.git platform

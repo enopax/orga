@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # Enopax Project Setup Script
-# This script creates the Enopax project structure and clones all repositories
-# Configuration is read from projects.json
+# This script discovers projects and clones their repositories
+# Each project folder should contain CLAUDE.md and .repos files
 
 # Note: We don't use 'set -e' to allow the script to continue if git clone fails
 
@@ -16,29 +16,10 @@ NC='\033[0m' # No Color
 # Base directory (where this script is located)
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 BASE_DIR="$SCRIPT_DIR"
-CONFIG_FILE="$BASE_DIR/projects.json"
 
 echo -e "${BLUE}=====================================${NC}"
-echo -e "${BLUE} Project Setup${NC}"
+echo -e "${BLUE}Enopax Project Setup${NC}"
 echo -e "${BLUE}=====================================${NC}\n"
-
-# Check if jq is installed
-if ! command -v jq &> /dev/null; then
-    echo -e "${RED}Error: jq is not installed${NC}"
-    echo -e "Please install jq to parse JSON:"
-    echo -e "  macOS: brew install jq"
-    echo -e "  Linux: apt-get install jq or yum install jq"
-    exit 1
-fi
-
-# Check if projects.json exists
-if [ ! -f "$CONFIG_FILE" ]; then
-    echo -e "${RED}Error: projects.json not found${NC}"
-    echo -e "Expected location: $CONFIG_FILE"
-    exit 1
-fi
-
-echo -e "${BLUE}Reading configuration from projects.json${NC}\n"
 
 # Function to create directory if it doesn't exist
 create_dir() {
@@ -62,6 +43,30 @@ create_claude_md() {
     fi
 }
 
+# Function to create empty .repos if it doesn't exist
+create_repos_file() {
+    local file=$1
+    if [ ! -f "$file" ]; then
+        echo -e "${GREEN}✓${NC} Creating: $(basename "$(dirname "$file")")/.repos"
+        cat > "$file" << 'EOF'
+# Repository configuration
+# Format: <git_url> [folder_name]
+# If folder_name is omitted, uses repository name from URL
+
+EOF
+    else
+        echo -e "${YELLOW}→${NC} File already exists: $(basename "$(dirname "$file")")/.repos"
+    fi
+}
+
+# Function to extract repository name from Git URL
+extract_repo_name() {
+    local url=$1
+    # Extract repo name: git@github.com:user/repo.git -> repo
+    # Remove .git suffix and extract last part after /
+    basename "$url" .git
+}
+
 # Function to clone repository if it doesn't exist
 clone_repo() {
     local repo_url=$1
@@ -81,65 +86,111 @@ clone_repo() {
     fi
 }
 
+echo -e "${BLUE}Discovering projects...${NC}\n"
+
+# Find all directories with CLAUDE.md (these are project folders)
+PROJECTS=()
+for dir in "$BASE_DIR"/*/ ; do
+    if [ -f "${dir}CLAUDE.md" ]; then
+        project_name=$(basename "$dir")
+        # Skip hidden directories
+        if [[ ! "$project_name" =~ ^\. ]]; then
+            PROJECTS+=("$project_name")
+        fi
+    fi
+done
+
+if [ ${#PROJECTS[@]} -eq 0 ]; then
+    echo -e "${YELLOW}No projects found (directories with CLAUDE.md)${NC}"
+    echo -e "${YELLOW}Create a directory with CLAUDE.md and .repos to define a project${NC}\n"
+fi
+
+echo -e "${BLUE}Found ${#PROJECTS[@]} project(s):${NC} ${PROJECTS[*]}\n"
+
 # Step 1: Create .gitignore
 echo -e "${BLUE}Step 1: Creating .gitignore${NC}\n"
 
 GITIGNORE_FILE="$BASE_DIR/.gitignore"
-if [ ! -f "$GITIGNORE_FILE" ]; then
-    echo -e "${GREEN}✓${NC} Creating .gitignore"
+echo -e "${GREEN}✓${NC} Generating .gitignore"
 
-    # Start with header
-    cat > "$GITIGNORE_FILE" << 'EOF'
+# Start with header
+cat > "$GITIGNORE_FILE" << 'EOF'
 # Enopax Project Structure
 # This file ignores repository folders but tracks project structure files
 
 EOF
 
-    # Add entries for each repository from JSON
-    jq -c '.projects[]' "$CONFIG_FILE" | while read -r project_obj; do
-        project_name=$(echo "$project_obj" | jq -r '.name')
-        echo "# ${project_name} Project" >> "$GITIGNORE_FILE"
+# Add entries for each project
+for project in "${PROJECTS[@]}"; do
+    project_dir="$BASE_DIR/$project"
+    repos_file="$project_dir/.repos"
 
-        echo "$project_obj" | jq -r '.repositories[].name' | while read -r repo_name; do
-            echo "${project_name}/${repo_name}/" >> "$GITIGNORE_FILE"
-        done
+    if [ -f "$repos_file" ]; then
+        echo "# $project Project" >> "$GITIGNORE_FILE"
+
+        # Read .repos file and extract folder names
+        while IFS= read -r line || [ -n "$line" ]; do
+            # Skip empty lines and comments
+            [[ -z "$line" || "$line" =~ ^[[:space:]]*# ]] && continue
+
+            # Parse: git_url [folder_name]
+            read -r git_url folder_name <<< "$line"
+
+            # Use repo name from URL if folder_name not provided
+            if [ -z "$folder_name" ]; then
+                folder_name=$(extract_repo_name "$git_url")
+            fi
+
+            if [ -n "$folder_name" ]; then
+                echo "$project/$folder_name/" >> "$GITIGNORE_FILE"
+            fi
+        done < "$repos_file"
 
         echo "" >> "$GITIGNORE_FILE"
-    done
-else
-    echo -e "${YELLOW}→${NC} .gitignore already exists"
-fi
+    fi
+done
 
-# Step 2: Create project directories
+# Step 2: Ensure project directories exist
 echo -e "\n${BLUE}Step 2: Creating project directories${NC}\n"
 
-jq -r '.projects[].name' "$CONFIG_FILE" | while read -r project; do
+for project in "${PROJECTS[@]}"; do
     create_dir "$BASE_DIR/$project"
-done
-
-# Step 3: Create CLAUDE.md files
-echo -e "\n${BLUE}Step 3: Creating CLAUDE.md files${NC}\n"
-
-jq -r '.projects[].name' "$CONFIG_FILE" | while read -r project; do
     create_claude_md "$BASE_DIR/$project/CLAUDE.md"
+    create_repos_file "$BASE_DIR/$project/.repos"
 done
 
-# Step 4: Clone repositories
-echo -e "\n${BLUE}Step 4: Cloning repositories${NC}\n"
+# Step 3: Clone repositories
+echo -e "\n${BLUE}Step 3: Cloning repositories${NC}\n"
 
-# Parse JSON and clone repositories
-jq -c '.projects[]' "$CONFIG_FILE" | while read -r project_obj; do
-    project_name=$(echo "$project_obj" | jq -r '.name')
+for project in "${PROJECTS[@]}"; do
+    project_dir="$BASE_DIR/$project"
+    repos_file="$project_dir/.repos"
 
-    echo -e "${BLUE}Project: $project_name${NC}"
+    echo -e "${BLUE}Project: $project${NC}"
 
-    echo "$project_obj" | jq -c '.repositories[]' | while read -r repo_obj; do
-        repo_name=$(echo "$repo_obj" | jq -r '.name')
-        repo_url=$(echo "$repo_obj" | jq -r '.url')
-        target_dir="$BASE_DIR/$project_name/$repo_name"
+    if [ ! -f "$repos_file" ]; then
+        echo -e "${YELLOW}  No .repos file found, skipping${NC}\n"
+        continue
+    fi
 
-        clone_repo "$repo_url" "$target_dir" "$repo_name"
-    done
+    # Read .repos file and clone repositories
+    while IFS= read -r line || [ -n "$line" ]; do
+        # Skip empty lines and comments
+        [[ -z "$line" || "$line" =~ ^[[:space:]]*# ]] && continue
+
+        # Parse: git_url [folder_name]
+        read -r git_url folder_name <<< "$line"
+
+        # Use repo name from URL if folder_name not provided
+        if [ -z "$folder_name" ]; then
+            folder_name=$(extract_repo_name "$git_url")
+        fi
+
+        if [ -n "$git_url" ] && [ -n "$folder_name" ]; then
+            target_dir="$project_dir/$folder_name"
+            clone_repo "$git_url" "$target_dir" "$folder_name"
+        fi
+    done < "$repos_file"
 
     echo ""
 done
@@ -150,19 +201,31 @@ echo -e "${GREEN}Setup Complete!${NC}"
 echo -e "${BLUE}=====================================${NC}\n"
 
 # Display the structure dynamically
-jq -c '.projects[]' "$CONFIG_FILE" | while read -r project_obj; do
-    project_name=$(echo "$project_obj" | jq -r '.name')
-    repo_count=$(echo "$project_obj" | jq '.repositories | length')
+for project in "${PROJECTS[@]}"; do
+    project_dir="$BASE_DIR/$project"
+    repos_file="$project_dir/.repos"
 
-    echo -e "├── $project_name/"
+    echo -e "├── $project/"
     echo -e "│   ├── CLAUDE.md"
+    echo -e "│   ├── .repos"
 
-    echo "$project_obj" | jq -c '.repositories[]' | while read -r repo_obj; do
-        repo_name=$(echo "$repo_obj" | jq -r '.name')
-        echo -e "│   └── $repo_name/"
-    done
+    if [ -f "$repos_file" ]; then
+        while IFS= read -r line || [ -n "$line" ]; do
+            [[ -z "$line" || "$line" =~ ^[[:space:]]*# ]] && continue
+            read -r git_url folder_name <<< "$line"
+
+            # Use repo name from URL if folder_name not provided
+            if [ -z "$folder_name" ]; then
+                folder_name=$(extract_repo_name "$git_url")
+            fi
+
+            if [ -n "$folder_name" ]; then
+                echo -e "│   └── $folder_name/"
+            fi
+        done < "$repos_file"
+    fi
 done
 
 echo ""
-echo -e "${GREEN}✓${NC} Setup complete! All projects configured from projects.json"
-echo -e "${YELLOW}Tip:${NC} Edit projects.json to add or modify projects and repositories\n"
+echo -e "${GREEN}✓${NC} Setup complete! Projects auto-discovered from directories with CLAUDE.md"
+echo -e "${YELLOW}Tip:${NC} Edit <project>/.repos to add or modify repositories\n"

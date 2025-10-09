@@ -1,6 +1,12 @@
 # Enopax Project Structure
 # This file ignores repository folders but tracks project structure files
 
+# AgentProvider Project
+AgentProvider/provider-agent/
+
+# GitProvider Project
+GitProvider/provider-git/
+
 # Platform Project
 Platform/platform/
 
@@ -8,11 +14,6 @@ Platform/platform/
 ResourceAPI/resource-api/
 ResourceAPI/resource-api-frontend/
 
-# GitProvider Project
-GitProvider/provider-git/
-
-# AgentProvider Project
-AgentProvider/provider-agent/
-
 # Test Project
 Test/web-test/
+
