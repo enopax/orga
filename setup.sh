@@ -91,15 +91,19 @@ if [ ! -f "$GITIGNORE_FILE" ]; then
     # Start with header
     cat > "$GITIGNORE_FILE" << 'EOF'
 # Enopax Project Structure
-# This file ignores all project folders but keeps CLAUDE.md files tracked
+# This file ignores repository folders but tracks project structure files
 
 EOF
 
-    # Add entries for each project from JSON
-    jq -r '.projects[].name' "$CONFIG_FILE" | while read -r project; do
-        echo "# ${project} Project" >> "$GITIGNORE_FILE"
-        echo "${project}/" >> "$GITIGNORE_FILE"
-        echo "!${project}/CLAUDE.md" >> "$GITIGNORE_FILE"
+    # Add entries for each repository from JSON
+    jq -c '.projects[]' "$CONFIG_FILE" | while read -r project_obj; do
+        project_name=$(echo "$project_obj" | jq -r '.name')
+        echo "# ${project_name} Project" >> "$GITIGNORE_FILE"
+
+        echo "$project_obj" | jq -r '.repositories[].name' | while read -r repo_name; do
+            echo "${project_name}/${repo_name}/" >> "$GITIGNORE_FILE"
+        done
+
         echo "" >> "$GITIGNORE_FILE"
     done
 else

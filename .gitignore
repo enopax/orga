@@ -1,25 +1,18 @@
 # Enopax Project Structure
-# This file ignores all project folders but keeps CLAUDE.md files tracked
-
-orga/
+# This file ignores repository folders but tracks project structure files
 
 # Platform Project
-Platform/
-!Platform/CLAUDE.md
+Platform/platform/
 
 # ResourceAPI Project
-ResourceAPI/
-!ResourceAPI/CLAUDE.md
+ResourceAPI/resource-api/
+ResourceAPI/resource-api-frontend/
 
 # GitProvider Project
-GitProvider/
-!GitProvider/CLAUDE.md
+GitProvider/provider-git/
 
 # AgentProvider Project
-AgentProvider/
-!AgentProvider/CLAUDE.md
+AgentProvider/provider-agent/
 
 # Test Project
-Test/
-!Test/CLAUDE.md
-
+Test/web-test/
