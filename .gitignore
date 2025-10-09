@@ -1,6 +1,8 @@
 # Enopax Project Structure
 # This file ignores all project folders but keeps CLAUDE.md files tracked
 
+orga/
+
 # Platform Project
 Platform/
 !Platform/CLAUDE.md

@@ -26,7 +26,7 @@ All projects and repositories are defined in `projects.json`:
       "repositories": [
         {
           "name": "platform",
-          "url": "https://github.com/enopax/platform.git"
+          "url": "git@github.com:enopax/platform.git"
         }
       ]
     }
@@ -44,7 +44,7 @@ All projects and repositories are defined in `projects.json`:
   "repositories": [
     {
       "name": "repo-name",
-      "url": "https://github.com/enopax/repo-name.git"
+      "url": "git@github.com:enopax/repo-name.git"
     }
   ]
 }
@@ -133,7 +133,8 @@ The script automatically:
 
 ## Notes
 
-- Repository URLs in `projects.json` can be HTTPS or SSH
+- Repository URLs in `projects.json` use SSH format (`git@github.com:user/repo.git`)
+- SSH keys must be configured for GitHub access
 - The script preserves existing repositories and files
 - CLAUDE.md files are created empty - add content as needed
 - Each project can have multiple repositories

@@ -19,7 +19,7 @@ BASE_DIR="$SCRIPT_DIR"
 CONFIG_FILE="$BASE_DIR/projects.json"
 
 echo -e "${BLUE}=====================================${NC}"
-echo -e "${BLUE}Enopax Project Setup${NC}"
+echo -e "${BLUE} Project Setup${NC}"
 echo -e "${BLUE}=====================================${NC}\n"
 
 # Check if jq is installed
@@ -139,13 +139,6 @@ done
 echo -e "${BLUE}=====================================${NC}"
 echo -e "${GREEN}Setup Complete!${NC}"
 echo -e "${BLUE}=====================================${NC}\n"
-
-echo -e "Directory structure created:"
-echo -e "enopax/"
-echo -e "├── projects.json"
-echo -e "├── setup.sh"
-echo -e "├── .gitignore"
-echo -e "├── CLAUDE.md"
 
 # Display the structure dynamically
 jq -c '.projects[]' "$CONFIG_FILE" | while read -r project_obj; do

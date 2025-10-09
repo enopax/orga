@@ -5,7 +5,7 @@
       "repositories": [
         {
           "name": "platform",
-          "url": "https://github.com/enopax/platform.git"
+          "url": "git@github.com:enopax/platform.git"
         }
       ]
     },
@@ -14,11 +14,11 @@
       "repositories": [
         {
           "name": "resource-api",
-          "url": "https://github.com/enopax/resource-api.git"
+          "url": "git@github.com:enopax/resource-api.git"
         },
         {
           "name": "resource-api-frontend",
-          "url": "https://github.com/enopax/resource-api-frontend.git"
+          "url": "git@github.com:enopax/resource-api-frontend.git"
         }
       ]
     },
@@ -27,7 +27,7 @@
       "repositories": [
         {
           "name": "provider-git",
-          "url": "https://github.com/enopax/provider-git.git"
+          "url": "git@github.com:enopax/provider-git.git"
         }
       ]
     },
@@ -36,7 +36,7 @@
       "repositories": [
         {
           "name": "provider-agent",
-          "url": "https://github.com/enopax/provider-agent.git"
+          "url": "git@github.com:enopax/provider-agent.git"
         }
       ]
     },
@@ -45,7 +45,7 @@
       "repositories": [
         {
           "name": "web-test",
-          "url": "https://github.com/enopax/web-test.git"
+          "url": "git@github.com:enopax/web-test.git"
         }
       ]
     }
