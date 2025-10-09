@@ -2,7 +2,7 @@
 
 # Enopax Project Setup Script
 # This script discovers projects and clones their repositories
-# Each project folder should contain CLAUDE.md and .repos files
+# Each project folder should contain a .repos file
 
 # Note: We don't use 'set -e' to allow the script to continue if git clone fails
 
@@ -36,7 +36,6 @@ add_to_gitignore() {
     # Create .gitignore if it doesn't exist
     if [ ! -f "$GITIGNORE_FILE" ]; then
         cat > "$GITIGNORE_FILE" << 'EOF'
-# Enopax Project Structure
 # Repository folders are ignored
 
 EOF
@@ -70,10 +69,10 @@ clone_repo() {
 
 echo -e "${BLUE}Discovering projects...${NC}\n"
 
-# Find all directories with CLAUDE.md (these are project folders)
+# Find all directories with .repos (these are project folders)
 PROJECTS=()
 for dir in "$BASE_DIR"/*/ ; do
-    if [ -f "${dir}CLAUDE.md" ]; then
+    if [ -f "${dir}.repos" ]; then
         project_name=$(basename "$dir")
         # Skip hidden directories
         if [[ ! "$project_name" =~ ^\. ]]; then
@@ -83,8 +82,8 @@ for dir in "$BASE_DIR"/*/ ; do
 done
 
 if [ ${#PROJECTS[@]} -eq 0 ]; then
-    echo -e "${YELLOW}No projects found (directories with CLAUDE.md)${NC}"
-    echo -e "${YELLOW}Create a directory with CLAUDE.md and .repos to define a project${NC}\n"
+    echo -e "${YELLOW}No projects found (directories with .repos)${NC}"
+    echo -e "${YELLOW}Create a directory with .repos to define a project${NC}\n"
     exit 0
 fi
 
@@ -98,19 +97,6 @@ for project in "${PROJECTS[@]}"; do
     repos_file="$project_dir/.repos"
 
     echo -e "${BLUE}Project: $project${NC}"
-
-    # Create .repos file if it doesn't exist
-    if [ ! -f "$repos_file" ]; then
-        echo -e "${YELLOW}→${NC} No .repos file, creating empty one"
-        cat > "$repos_file" << 'EOF'
-# Repository configuration
-# Format: <git_url> [folder_name]
-# If folder_name is omitted, uses repository name from URL
-
-EOF
-        echo ""
-        continue
-    fi
 
     # Read .repos file and process repositories
     while IFS= read -r line || [ -n "$line" ]; do
