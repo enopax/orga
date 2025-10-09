@@ -4,7 +4,7 @@
 # This script creates the Enopax project structure and clones all repositories
 # Configuration is read from projects.json
 
-set -e  # Exit on error
+# Note: We don't use 'set -e' to allow the script to continue if git clone fails
 
 # Colors for output
 GREEN='\033[0;32m'
@@ -70,7 +70,12 @@ clone_repo() {
 
     if [ ! -d "$target_dir/.git" ]; then
         echo -e "${GREEN}✓${NC} Cloning $repo_name..."
-        git clone "$repo_url" "$target_dir"
+        if git clone "$repo_url" "$target_dir" 2>&1; then
+            echo -e "${GREEN}✓${NC} Successfully cloned: $repo_name"
+        else
+            echo -e "${RED}✗${NC} Failed to clone: $repo_name (continuing...)"
+            return 1
+        fi
     else
         echo -e "${YELLOW}→${NC} Repository already cloned: $repo_name"
     fi
@@ -155,5 +160,5 @@ jq -c '.projects[]' "$CONFIG_FILE" | while read -r project_obj; do
 done
 
 echo ""
-echo -e "${GREEN}✓${NC} All projects and repositories configured from projects.json"
+echo -e "${GREEN}✓${NC} Setup complete! All projects configured from projects.json"
 echo -e "${YELLOW}Tip:${NC} Edit projects.json to add or modify projects and repositories\n"
