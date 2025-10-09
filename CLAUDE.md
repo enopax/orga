@@ -20,12 +20,12 @@
 Enopax (Organisation)
 ├── Project 1: Platform
 │   └── platform/ (Next.js production platform)
-├── Project 2: Resource API
+├── Project 2: ResourceAPI
 │   ├── resource-api/ (API server + script framework)
 │   └── resource-api-frontend/ (Vue.js API testing tool)
-├── Project 3: Git Provider
+├── Project 3: GitProvider
 │   └── provider-git/ (Git repository provisioning)
-├── Project 4: Agent Provider
+├── Project 4: AgentProvider
 │   └── provider-agent/ (AI agent provisioning)
 └── Project 5: Test
     └── web-test/ (Test repository for development)
