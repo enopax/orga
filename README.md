@@ -9,7 +9,7 @@ This repository manages the Enopax organisation's project structure using auto-d
 ```
 
 This will:
-1. Auto-discover all projects (folders with `CLAUDE.md`)
+1. Auto-discover all projects (folders with `.repos` files)
 2. Generate `.gitignore` based on discovered repositories
 3. Clone all configured repositories from each project's `.repos` file
 
@@ -17,7 +17,7 @@ This will:
 
 ### Convention over Configuration
 
-**No central config file needed!** The script automatically discovers projects by scanning for directories containing a `CLAUDE.md` file.
+**No central config file needed!** The script automatically discovers projects by scanning for directories containing a `.repos` file.
 
 ### Project Structure
 
@@ -27,12 +27,12 @@ enopax/
 ├── .gitignore            # Auto-generated
 ├── CLAUDE.md             # Organisation overview
 ├── Platform/
-│   ├── CLAUDE.md         # Marks this as a project
-│   ├── .repos            # Repository configuration
+│   ├── CLAUDE.md         # Project documentation
+│   ├── .repos            # Repository configuration (marks this as a project)
 │   └── platform/         # Cloned repository (ignored)
 ├── ResourceAPI/
-│   ├── CLAUDE.md
-│   ├── .repos
+│   ├── CLAUDE.md         # Project documentation
+│   ├── .repos            # Repository configuration (marks this as a project)
 │   ├── resource-api/
 │   └── resource-api-frontend/
 └── ...
@@ -60,16 +60,16 @@ git@github.com:enopax/other-repo.git custom-folder
 # 1. Create project directory
 mkdir NewProject
 
-# 2. Create CLAUDE.md (marks it as a project)
-touch NewProject/CLAUDE.md
-
-# 3. Create .repos file
+# 2. Create .repos file (marks it as a project)
 cat > NewProject/.repos << 'EOF'
 # Repository configuration
 # Format: <git_url> <folder_name>
 
 git@github.com:enopax/new-repo.git repo-name
 EOF
+
+# 3. (Optional) Create CLAUDE.md for documentation
+echo "# NewProject" > NewProject/CLAUDE.md
 
 # 4. Run setup
 ./setup.sh
@@ -102,12 +102,12 @@ echo "git@github.com:enopax/another-repo.git another-folder" >> Platform/.repos
 
 ## Features
 
-✅ **Auto-discovery** - Projects found automatically (folders with CLAUDE.md)
+✅ **Auto-discovery** - Projects found automatically (folders with `.repos` files)
 ✅ **Distributed config** - Each project manages its own `.repos` file
 ✅ **No central config** - No `projects.json` to maintain
 ✅ **Simple format** - Space-separated text, no JSON
 ✅ **Idempotent** - Safe to run multiple times
-✅ **Auto-generated .gitignore** - Based on discovered projects
+✅ **Incremental .gitignore** - Updates without overwriting manual edits
 ✅ **Works from anywhere** - Portable, no hardcoded paths
 
 ## Workflow
@@ -131,48 +131,48 @@ git pull
 
 ```bash
 mkdir MyProject
-echo "# MyProject" > MyProject/CLAUDE.md
 cat > MyProject/.repos << 'EOF'
 git@github.com:enopax/my-repo.git my-repo
 EOF
 
 ./setup.sh
 
-git add MyProject/CLAUDE.md MyProject/.repos
+git add MyProject/.repos
 git commit -m "feat: add MyProject"
 git push
 ```
 
 ## How Discovery Works
 
-The script scans for directories containing `CLAUDE.md`:
-- Finds: `Platform/CLAUDE.md` → Project: Platform
-- Finds: `ResourceAPI/CLAUDE.md` → Project: ResourceAPI
-- Skips: `docs/` (no CLAUDE.md)
+The script scans for directories containing `.repos`:
+- Finds: `Platform/.repos` → Project: Platform
+- Finds: `ResourceAPI/.repos` → Project: ResourceAPI
+- Skips: `docs/` (no .repos file)
 - Skips: `.git/` (hidden directory)
 
 ## Customisation
 
 The script automatically:
-- Discovers projects (folders with CLAUDE.md)
+- Discovers projects (folders with `.repos` files)
 - Reads each project's `.repos` file
 - Clones repositories only if they don't exist
-- Generates `.gitignore` with all repository paths
-- Skips projects without `.repos` file
+- Updates `.gitignore` incrementally with repository paths
+- Only processes projects that have a `.repos` file
 
 ## Notes
 
-- **Project marker**: A folder must have `CLAUDE.md` to be considered a project
+- **Project marker**: A folder must have `.repos` file to be considered a project
 - **SSH URLs**: Use `git@github.com:user/repo.git` format
-- **Custom names**: Second parameter in `.repos` allows custom folder names
+- **Custom names**: Second parameter in `.repos` allows custom folder names (optional)
 - **Comments**: Lines starting with `#` in `.repos` are ignored
 - **Empty lines**: Ignored in `.repos` files
 - **No jq**: Pure bash, no external JSON parsers needed
+- **No .repos creation**: Script does not create `.repos` files, only discovers existing ones
 
 ## Troubleshooting
 
 ### Project not discovered?
-- Ensure folder has `CLAUDE.md` file
+- Ensure folder has `.repos` file
 - Check folder is not hidden (doesn't start with `.`)
 
 ### Repository not cloning?
@@ -181,9 +181,9 @@ The script automatically:
 - Check URL format: `<git_url> <folder_name>`
 
 ### .gitignore not updating?
-- Run `./setup.sh` - it regenerates on every run
+- Run `./setup.sh` - it updates incrementally on every run
 - Check `.repos` files are formatted correctly
 
 ---
 
-*This setup uses convention over configuration - folders with CLAUDE.md are automatically discovered as projects!*
+*This setup uses convention over configuration - folders with `.repos` files are automatically discovered as projects!*
