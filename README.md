@@ -29,7 +29,7 @@ enopax/
 ├── Platform/
 │   ├── CLAUDE.md         # Project documentation
 │   ├── .repos            # Repository configuration (marks this as a project)
-│   └── platform/         # Cloned repository (ignored)
+│   └── platform/         # Cloned repository
 ├── ResourceAPI/
 │   ├── CLAUDE.md         # Project documentation
 │   ├── .repos            # Repository configuration (marks this as a project)
