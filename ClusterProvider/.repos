@@ -1,3 +1,4 @@
 # Repository configuration for Cluster Provider project
 
 git@github.com:enopax/provider-cluster.git
+git@github.com:enopax/templates.git cluster-templates

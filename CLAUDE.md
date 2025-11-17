@@ -67,7 +67,7 @@ Enopax (Organisation)
 
 ---
 
-### Project 2: Resource API
+### Project 2: Resource API (Also called Provider API)
 **Purpose**: Script-based provider framework with testing tools
 **Repositories**: 2
 **Status**: ✅ Production Ready

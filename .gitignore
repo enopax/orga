@@ -20,3 +20,9 @@ ResourceAPI/resource-api-frontend/
 Test/web-test/
 
 ClusterProvider/provider-cluster/
+Platform/platform-old/
+Platform/web/
+Platform/web-yannik/
+Platform/dex/
+Platform/idp/
+

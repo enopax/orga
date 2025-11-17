@@ -2,4 +2,6 @@
 # Format: <git_url> [folder_name]
 # If folder_name is omitted, uses repository name from URL
 
-git@github.com:addiinnocent/IIIII.git platform
+git@github.com:addiinnocent/IIIII.git platform-old
+git@github.com:enopax/platform.git web-yannik
+git@github.com:enopax/web.git web
