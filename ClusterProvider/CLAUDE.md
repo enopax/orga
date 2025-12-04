@@ -1,6 +1,6 @@
 # CLAUDE.md - k0rdent Cluster API Provider Hetzner Integration
 
-**Last Updated**: 2025-12-04 (Project Archived)
+**Last Updated**: 2025-12-04 (Project Archived - Final Update)
 **Project**: Hetzner Provider Integration for k0rdent
 **Status**: 🎉 **PROJECT ARCHIVED - SUCCESSFULLY COMPLETED**
 **Implementation Status**: ✅ Complete (All development finished and merged)
@@ -9,6 +9,7 @@
 **PR Status**: ✅ PR #6 Merged to Main (https://github.com/enopax/templates/pull/6)
 **Repository Status**: Clean, documented, and ready for production testing
 **Archive Date**: 2025-12-04
+**README Archive Notice**: ✅ Added (2025-12-04)
 
 ---
 
