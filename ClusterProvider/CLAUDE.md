@@ -354,10 +354,14 @@ With the ProviderInterface CRD now included in the Helm chart:
   - Current implementation status
   - Progress tracking and timeline
   - Testing status
-- **Lessons Learned**: `templates/docs/k0rdent/lessons-learned.md`
+- **Lessons Learned**: `templates/docs/k0rdent/lessons-learned.md` **(v1.1 - Enhanced)**
+  - 23 comprehensive lessons from the project
   - Technical insights from the investigation
-  - Process improvements
+  - Process improvements and project management
+  - Documentation and repository management strategies
+  - PR organization and version management
   - Recommendations for future integrations
+  - Final project metrics and completion insights
 - **Task Tracking**: `templates/TODO.md`
   - Detailed task breakdown
   - Phase completion status
