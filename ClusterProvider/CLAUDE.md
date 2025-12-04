@@ -14,7 +14,9 @@ This project integrates Cluster API Provider Hetzner (CAPH) with k0rdent Cluster
 
 **✅ Phase 1-2 Complete**: Root cause identified
 **✅ Phase 5.1 Complete**: ProviderInterface implementation complete
-**📋 Phase 5.2**: Testing in progress
+**✅ Phase 6.1 Complete**: Documentation complete
+**⏸️ Phase 5.3**: Testing blocked - awaiting live k0rdent cluster
+**📋 Phase 6.2-7**: Pending
 
 ### Key Findings
 
@@ -310,10 +312,15 @@ With the ProviderInterface CRD now included in the Helm chart:
 
 ## Documentation References
 
-- **Root Cause Analysis**: `/docs/k0rdent/root-cause-analysis.md`
-- **Repository Structure**: `/docs/k0rdent/repository-structure-analysis.md`
-- **Task Tracking**: `/TODO.md`
-- **Integration Status**: `/docs/status/integration-status.md`
+### Technical Analysis
+- **Root Cause Analysis**: `templates/docs/k0rdent/root-cause-analysis.md`
+- **Repository Structure**: `templates/docs/k0rdent/repository-structure-analysis.md`
+
+### Guides and Status
+- **Complete Integration Guide**: `templates/docs/k0rdent/hetzner-provider-integration-complete.md` ✨ NEW
+- **Lessons Learned**: `templates/docs/k0rdent/lessons-learned.md` ✨ NEW
+- **Integration Status**: `templates/docs/status/integration-status.md` ✨ NEW
+- **Task Tracking**: `templates/TODO.md`
 
 ---
 
